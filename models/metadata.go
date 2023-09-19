@@ -40,7 +40,7 @@ func (m Metadata) filterStreams(codecType CodecType) []Streams {
 	return streams
 }
 
-func (m Metadata) FistVideoStream() *Streams {
+func (m Metadata) FirstVideoStream() *Streams {
 	return m.firstStream(CodecTypeVideo)
 }
 
@@ -57,7 +57,7 @@ func (m Metadata) firstStream(codecType CodecType) *Streams {
 }
 
 func (m Metadata) IsVideoRotated() *bool {
-	videoStream := m.FistVideoStream()
+	videoStream := m.FirstVideoStream()
 	if videoStream == nil {
 		return nil
 	}
