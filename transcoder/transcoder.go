@@ -189,7 +189,7 @@ func (t *Transcoder) Initialize(inputPath string, outputPath string) error {
 		return fmt.Errorf("error executing (%s) | error: %s | message: %s %s", command, err, outb.String(), errb.String())
 	}
 
-	if err = json.Unmarshal([]byte(outb.String()), &Metadata); err != nil {
+	if err = json.Unmarshal(outb.Bytes(), &Metadata); err != nil {
 		return err
 	}
 
@@ -277,10 +277,11 @@ func (t *Transcoder) Run(progress bool) <-chan error {
 // Stop Ends the transcoding process
 func (t *Transcoder) Stop() error {
 	if t.process != nil {
-
 		stdin := t.stdStdinPipe
 		if stdin != nil {
-			stdin.Write([]byte("q\n"))
+			if _, err := stdin.Write([]byte("q\n")); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

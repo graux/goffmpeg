@@ -10,6 +10,14 @@ import (
 	"github.com/graux/goffmpeg/models"
 )
 
+const (
+	execNameFFMpeg  = "ffmpeg"
+	execNameFFProbe = "ffprobe"
+	osWindows       = "windows"
+	commandWhich    = "which"
+	commandWhere    = "where"
+)
+
 func DurToSec(dur string) (sec float64) {
 	durAry := strings.Split(dur, ":")
 	var secs float64
@@ -26,34 +34,22 @@ func DurToSec(dur string) (sec float64) {
 }
 
 func GetFFmpegExec() []string {
-	platform := runtime.GOOS
-	command := []string{"", "ffmpeg"}
-
-	switch platform {
-	case "windows":
-		command[0] = "where"
-		break
-	default:
-		command[0] = "which"
-		break
-	}
-
-	return command
+	return []string{getLocateBinCommand(), execNameFFMpeg}
 }
 
 func GetFFprobeExec() []string {
-	platform := runtime.GOOS
-	command := []string{"", "ffprobe"}
+	return []string{getLocateBinCommand(), execNameFFProbe}
+}
 
-	switch platform {
-	case "windows":
-		command[0] = "where"
-		break
-	default:
-		command[0] = "which"
-		break
+func isWindows() bool {
+	return runtime.GOOS == osWindows
+}
+
+func getLocateBinCommand() string {
+	if isWindows() {
+		return commandWhere
 	}
-	return command
+	return commandWhich
 }
 
 func CheckFileType(streams []models.Streams) models.CodecType {
@@ -67,12 +63,10 @@ func CheckFileType(streams []models.Streams) models.CodecType {
 }
 
 func LineSeparator() string {
-	switch runtime.GOOS {
-	case "windows":
+	if isWindows() {
 		return "\r\n"
-	default:
-		return "\n"
 	}
+	return "\n"
 }
 
 // TestCmd ...

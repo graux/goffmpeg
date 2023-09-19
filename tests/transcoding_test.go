@@ -171,10 +171,8 @@ func TestTranscodingProgress(t *testing.T) {
 	assert.Nil(t, err)
 
 	done := trans.Run(true)
-	for val := range trans.Output() {
-		if &val != nil {
-			break
-		}
+	for range trans.Output() {
+		break
 	}
 
 	err = <-done
