@@ -3,8 +3,8 @@ package transcoder
 import (
 	"testing"
 
+	"github.com/graux/goffmpeg/models"
 	"github.com/stretchr/testify/require"
-	"github.com/xfrr/goffmpeg/models"
 )
 
 func TestTranscoder(t *testing.T) {
