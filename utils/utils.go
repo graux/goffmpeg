@@ -26,8 +26,8 @@ func DurToSec(dur string) (sec float64) {
 }
 
 func GetFFmpegExec() []string {
-	var platform = runtime.GOOS
-	var command = []string{"", "ffmpeg"}
+	platform := runtime.GOOS
+	command := []string{"", "ffmpeg"}
 
 	switch platform {
 	case "windows":
@@ -42,8 +42,8 @@ func GetFFmpegExec() []string {
 }
 
 func GetFFprobeExec() []string {
-	var platform = runtime.GOOS
-	var command = []string{"", "ffprobe"}
+	platform := runtime.GOOS
+	command := []string{"", "ffprobe"}
 
 	switch platform {
 	case "windows":
@@ -56,15 +56,14 @@ func GetFFprobeExec() []string {
 	return command
 }
 
-func CheckFileType(streams []models.Streams) string {
+func CheckFileType(streams []models.Streams) models.CodecType {
 	for i := 0; i < len(streams); i++ {
 		st := streams[i]
-		if st.CodecType == "video" {
-			return "video"
+		if st.CodecType == models.CodecTypeVideo {
+			return models.CodecTypeVideo
 		}
 	}
-
-	return "audio"
+	return models.CodecTypeAudio
 }
 
 func LineSeparator() string {

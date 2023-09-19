@@ -1,16 +1,20 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
-type Ffmpeg struct {
-	FfmpegBinPath  string
-	FfprobeBinPath string
-}
+type (
+	Orientation string
+	CodecType   string
+)
 
-type Metadata struct {
-	Streams []Streams `json:"streams"`
-	Format  Format    `json:"format"`
-}
+const (
+	CodecTypeVideo       CodecType   = "video"
+	CodecTypeAudio       CodecType   = "audio"
+	OrientationLandscape Orientation = "landscape"
+	OrientationPortrait  Orientation = "portrait"
+)
 
 type Streams struct {
 	Index              int
@@ -18,7 +22,7 @@ type Streams struct {
 	CodecName          string      `json:"codec_name"`
 	CodecLongName      string      `json:"codec_long_name"`
 	Profile            string      `json:"profile"`
-	CodecType          string      `json:"codec_type"`
+	CodecType          CodecType   `json:"codec_type"`
 	CodecTimeBase      string      `json:"codec_time_base"`
 	CodecTagString     string      `json:"codec_tag_string"`
 	CodecTag           string      `json:"codec_tag"`
@@ -59,19 +63,6 @@ type Disposition struct {
 	CleanEffects    int `json:"clean_effects"`
 }
 
-type Format struct {
-	Filename       string
-	NbStreams      int    `json:"nb_streams"`
-	NbPrograms     int    `json:"nb_programs"`
-	FormatName     string `json:"format_name"`
-	FormatLongName string `json:"format_long_name"`
-	Duration       string `json:"duration"`
-	Size           string `json:"size"`
-	BitRate        string `json:"bit_rate"`
-	ProbeScore     int    `json:"probe_score"`
-	Tags           Tags   `json:"tags"`
-}
-
 type SideData struct {
 	SideDataType  *string `json:"side_data_type"`
 	DisplayMatrix *string `json:"displaymatrix"`
@@ -98,14 +89,44 @@ type StreamTags struct {
 	Encoder      *string    `json:"encoder"`
 }
 
-type Progress struct {
-	FramesProcessed string
-	CurrentTime     string
-	CurrentBitrate  string
-	Progress        float64
-	Speed           string
+func (s Streams) IsVideo() bool {
+	return s.CodecType == CodecTypeVideo
 }
 
-type Tags struct {
-	Encoder string `json:"ENCODER"`
+func (s Streams) IsAudio() bool {
+	return s.CodecType == CodecTypeAudio
+}
+
+func (s Streams) Orientation() *Orientation {
+	if !s.IsVideo() || s.Width == 0 || s.Height == 0 {
+		return nil
+	}
+	orientation := OrientationLandscape
+	if s.Width < s.Height {
+		orientation = OrientationPortrait
+	}
+	return &orientation
+}
+
+func (s Streams) IsRotated() *bool {
+	if !s.IsVideo() {
+		return nil
+	}
+	rotated := false
+	if s.SideDataList == nil || len(s.SideDataList) == 0 {
+		return &rotated
+	}
+	for _, sideData := range s.SideDataList {
+		if sideData.Rotation != nil && abs(*sideData.Rotation) == 90 {
+			rotated = true
+		}
+	}
+	return &rotated
+}
+
+func abs(value int) int {
+	if value < 0 {
+		return -value
+	}
+	return value
 }

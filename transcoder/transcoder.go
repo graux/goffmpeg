@@ -19,11 +19,11 @@ import (
 
 // Transcoder Main struct
 type Transcoder struct {
-	stdErrPipe    io.ReadCloser
-	stdStdinPipe  io.WriteCloser
-	process       *exec.Cmd
-	mediafile     *models.Mediafile
-	configuration ffmpeg.Configuration
+	stdErrPipe         io.ReadCloser
+	stdStdinPipe       io.WriteCloser
+	process            *exec.Cmd
+	mediafile          *models.Mediafile
+	configuration      ffmpeg.Configuration
 	whiteListProtocols []string
 }
 
@@ -204,7 +204,6 @@ func (t *Transcoder) Initialize(inputPath string, outputPath string) error {
 	t.SetConfiguration(cfg)
 
 	return nil
-
 }
 
 // Run Starts the transcoding process
@@ -306,8 +305,8 @@ func (t Transcoder) Output() <-chan models.Progress {
 			if atEOF && len(data) == 0 {
 				return 0, nil, nil
 			}
-			//windows \r\n
-			//so  first \r and then \n can remove unexpected line break
+			// windows \r\n
+			// so  first \r and then \n can remove unexpected line break
 			if i := bytes.IndexByte(data, '\r'); i >= 0 {
 				// We have a cr terminated line
 				return i + 1, data[0:i], nil
@@ -331,7 +330,7 @@ func (t Transcoder) Output() <-chan models.Progress {
 			Progress := new(models.Progress)
 			line := scanner.Text()
 			if strings.Contains(line, "frame=") && strings.Contains(line, "time=") && strings.Contains(line, "bitrate=") {
-				var re = regexp.MustCompile(`=\s+`)
+				re := regexp.MustCompile(`=\s+`)
 				st := re.ReplaceAllString(line, `=`)
 
 				f := strings.Fields(st)
@@ -367,7 +366,7 @@ func (t Transcoder) Output() <-chan models.Progress {
 
 				timesec := utils.DurToSec(currentTime)
 				dursec, _ := strconv.ParseFloat(t.MediaFile().Metadata().Format.Duration, 64)
-				//live stream check
+				// live stream check
 				if dursec != 0 {
 					// Progress calculation
 					progress := (timesec * 100) / dursec

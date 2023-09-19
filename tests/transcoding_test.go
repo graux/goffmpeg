@@ -12,9 +12,8 @@ import (
 )
 
 func TestInputNotFound(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/nf"
-	var outputPath = "/tmp/ffmpeg/out/nf.mp4"
+	inputPath := "/tmp/ffmpeg/nf"
+	outputPath := "/tmp/ffmpeg/out/nf.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -23,9 +22,8 @@ func TestInputNotFound(t *testing.T) {
 }
 
 func TestTranscoding3GP(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/3gp"
-	var outputPath = "/tmp/ffmpeg/out/3gp.mp4"
+	inputPath := "/tmp/ffmpeg/3gp"
+	outputPath := "/tmp/ffmpeg/out/3gp.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -38,9 +36,8 @@ func TestTranscoding3GP(t *testing.T) {
 }
 
 func TestTranscodingAVI(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/avi"
-	var outputPath = "/tmp/ffmpeg/out/avi.mp4"
+	inputPath := "/tmp/ffmpeg/avi"
+	outputPath := "/tmp/ffmpeg/out/avi.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -53,9 +50,8 @@ func TestTranscodingAVI(t *testing.T) {
 }
 
 func TestTranscodingFLV(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/flv"
-	var outputPath = "/tmp/ffmpeg/out/flv.mp4"
+	inputPath := "/tmp/ffmpeg/flv"
+	outputPath := "/tmp/ffmpeg/out/flv.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -68,9 +64,8 @@ func TestTranscodingFLV(t *testing.T) {
 }
 
 func TestTranscodingMKV(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/mkv"
-	var outputPath = "/tmp/ffmpeg/out/mkv.mp4"
+	inputPath := "/tmp/ffmpeg/mkv"
+	outputPath := "/tmp/ffmpeg/out/mkv.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -83,9 +78,8 @@ func TestTranscodingMKV(t *testing.T) {
 }
 
 func TestTranscodingMOV(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/mov"
-	var outputPath = "/tmp/ffmpeg/out/mov.mp4"
+	inputPath := "/tmp/ffmpeg/mov"
+	outputPath := "/tmp/ffmpeg/out/mov.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -98,9 +92,8 @@ func TestTranscodingMOV(t *testing.T) {
 }
 
 func TestTranscodingMPEG(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/mpeg"
-	var outputPath = "/tmp/ffmpeg/out/mpeg.mp4"
+	inputPath := "/tmp/ffmpeg/mpeg"
+	outputPath := "/tmp/ffmpeg/out/mpeg.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -113,9 +106,8 @@ func TestTranscodingMPEG(t *testing.T) {
 }
 
 func TestTranscodingOGG(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/ogg"
-	var outputPath = "/tmp/ffmpeg/out/ogg.mp4"
+	inputPath := "/tmp/ffmpeg/ogg"
+	outputPath := "/tmp/ffmpeg/out/ogg.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -128,9 +120,8 @@ func TestTranscodingOGG(t *testing.T) {
 }
 
 func TestTranscodingWAV(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/wav"
-	var outputPath = "/tmp/ffmpeg/out/wav.mp4"
+	inputPath := "/tmp/ffmpeg/wav"
+	outputPath := "/tmp/ffmpeg/out/wav.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -143,9 +134,8 @@ func TestTranscodingWAV(t *testing.T) {
 }
 
 func TestTranscodingWEBM(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/webm"
-	var outputPath = "/tmp/ffmpeg/out/webm.mp4"
+	inputPath := "/tmp/ffmpeg/webm"
+	outputPath := "/tmp/ffmpeg/out/webm.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -158,9 +148,8 @@ func TestTranscodingWEBM(t *testing.T) {
 }
 
 func TestTranscodingWMV(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/wmv"
-	var outputPath = "/tmp/ffmpeg/out/wmv.mp4"
+	inputPath := "/tmp/ffmpeg/wmv"
+	outputPath := "/tmp/ffmpeg/out/wmv.mp4"
 
 	trans := new(transcoder.Transcoder)
 
@@ -173,9 +162,8 @@ func TestTranscodingWMV(t *testing.T) {
 }
 
 func TestTranscodingProgress(t *testing.T) {
-
-	var inputPath = "/tmp/ffmpeg/avi"
-	var outputPath = "/tmp/ffmpeg/out/avi.mp4"
+	inputPath := "/tmp/ffmpeg/avi"
+	outputPath := "/tmp/ffmpeg/out/avi.mp4"
 
 	trans := new(transcoder.Transcoder)
 
