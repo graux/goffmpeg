@@ -26,6 +26,14 @@ type Transcoder struct {
 	whiteListProtocols []string
 }
 
+func NewTranscoder(sourceFile, targetFile string) (*Transcoder, error) {
+	tr := new(Transcoder)
+	if err := tr.Initialize(sourceFile, targetFile); err != nil {
+		return nil, err
+	}
+	return tr, nil
+}
+
 // SetProcessStderrPipe Set the STDERR pipe
 func (t *Transcoder) SetProcessStderrPipe(v io.ReadCloser) {
 	t.stdErrPipe = v
