@@ -36,6 +36,7 @@ type Stream struct {
 	DurationTs         int         `json:"duration_ts"`
 	Duration           string      `json:"duration"`
 	BitRate            string      `json:"bit_rate"`
+	Channels           int         `json:"channels"`
 	Disposition        Disposition `json:"disposition"`
 	SideDataList       []SideData  `json:"side_data_list"`
 	Tags               *StreamTags `json:"tags"`
