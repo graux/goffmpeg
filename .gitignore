@@ -20,6 +20,14 @@ main-test.go
 goffmpeg
 coverage.out
 
+# IDE
 .DS_Store
 .vscode
 .idea
+
+# Go
+vendor
+
+# Test results
+*/test_results/*
+!*.gitkeep

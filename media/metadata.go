@@ -1,4 +1,4 @@
-package models
+package media
 
 type Metadata struct {
 	Streams []Streams `json:"streams"`
