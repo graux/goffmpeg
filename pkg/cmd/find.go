@@ -2,9 +2,7 @@ package cmd
 
 import "runtime"
 
-var (
-	platform = runtime.GOOS
-)
+var platform = runtime.GOOS
 
 func getFindCommand() string {
 	switch platform {

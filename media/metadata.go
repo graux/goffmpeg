@@ -1,25 +1,18 @@
 package media
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"os/exec"
+	"strings"
+
+	"github.com/graux/goffmpeg"
+)
+
 type Metadata struct {
 	Streams []Streams `json:"streams"`
 	Format  Format    `json:"format"`
-}
-
-type Format struct {
-	Filename       string
-	NbStreams      int    `json:"nb_streams"`
-	NbPrograms     int    `json:"nb_programs"`
-	FormatName     string `json:"format_name"`
-	FormatLongName string `json:"format_long_name"`
-	Duration       string `json:"duration"`
-	Size           string `json:"size"`
-	BitRate        string `json:"bit_rate"`
-	ProbeScore     int    `json:"probe_score"`
-	Tags           Tags   `json:"tags"`
-}
-
-type Tags struct {
-	Encoder string `json:"ENCODER"`
 }
 
 func (m Metadata) VideoStreams() []Streams {
@@ -62,4 +55,28 @@ func (m Metadata) IsVideoRotated() *bool {
 		return nil
 	}
 	return videoStream.IsRotated()
+}
+
+func NewMetadata(cfg goffmpeg.Configuration, inputPath string, whiteListProtocols ...string) (*Metadata, error) {
+	var outb, errb bytes.Buffer
+	metadata := new(Metadata)
+	command := []string{"-i", inputPath, "-print_format", "json", "-show_format", "-show_streams", "-show_error"}
+
+	if len(whiteListProtocols) > 0 {
+		command = append([]string{"-protocol_whitelist", strings.Join(whiteListProtocols, ",")}, command...)
+	}
+
+	cmd := exec.Command(cfg.FFprobeBinPath(), command...)
+	cmd.Stdout = &outb
+	cmd.Stderr = &errb
+
+	err := cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("error executing (%s) | error: %s | message: %s %s", command, err, outb.String(), errb.String())
+	}
+
+	if err = json.Unmarshal(outb.Bytes(), metadata); err != nil {
+		return nil, err
+	}
+	return metadata, nil
 }

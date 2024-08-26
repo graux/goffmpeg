@@ -4,18 +4,16 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"os/exec"
 	"regexp"
-	"strconv"
 	"strings"
 
-	"github.com/xfrr/goffmpeg"
-	"github.com/xfrr/goffmpeg/media"
-	"github.com/xfrr/goffmpeg/pkg/duration"
+	"github.com/graux/goffmpeg"
+	"github.com/graux/goffmpeg/media"
+	"github.com/graux/goffmpeg/pkg/duration"
 )
 
 // Transcoder Main struct
@@ -91,8 +89,6 @@ func (t Transcoder) GetCommand() []string {
 
 // InitializeEmptyTranscoder initializes the fields necessary for a blank transcoder
 func (t *Transcoder) InitializeEmptyTranscoder() error {
-	var Metadata media.Metadata
-
 	var err error
 	cfg := t.configuration
 	if len(cfg.FFmpegBinPath()) == 0 || len(cfg.FFprobeBinPath()) == 0 {
@@ -103,7 +99,7 @@ func (t *Transcoder) InitializeEmptyTranscoder() error {
 	}
 	// Set new File
 	MediaFile := new(media.File)
-	MediaFile.SetMetadata(Metadata)
+	MediaFile.SetMetadata(new(media.Metadata))
 
 	// Set transcoder configuration
 	t.SetMediaFile(MediaFile)
@@ -159,11 +155,7 @@ func (t *Transcoder) CreateOutputPipe(containerFormat string) (*io.PipeReader, e
 // Initialize Init the transcoding process
 func (t *Transcoder) Initialize(inputPath string, outputPath string) error {
 	var err error
-	var outb, errb bytes.Buffer
-	var Metadata media.Metadata
-
 	cfg := t.configuration
-
 	if len(cfg.FFmpegBinPath()) == 0 || len(cfg.FFprobeBinPath()) == 0 {
 		cfg, err = goffmpeg.Configure(context.Background())
 		if err != nil {
@@ -175,28 +167,14 @@ func (t *Transcoder) Initialize(inputPath string, outputPath string) error {
 		return errors.New("error on transcoder.Initialize: inputPath missing")
 	}
 
-	command := []string{"-i", inputPath, "-print_format", "json", "-show_format", "-show_streams", "-show_error"}
-
-	if t.whiteListProtocols != nil {
-		command = append([]string{"-protocol_whitelist", strings.Join(t.whiteListProtocols, ",")}, command...)
-	}
-
-	cmd := exec.Command(cfg.FFprobeBinPath(), command...)
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-
-	err = cmd.Run()
+	metadata, err := media.NewMetadata(cfg, inputPath, t.whiteListProtocols...)
 	if err != nil {
-		return fmt.Errorf("error executing (%s) | error: %s | message: %s %s", command, err, outb.String(), errb.String())
-	}
-
-	if err = json.Unmarshal(outb.Bytes(), &Metadata); err != nil {
 		return err
 	}
 
 	// Set new File
 	MediaFile := new(media.File)
-	MediaFile.SetMetadata(Metadata)
+	MediaFile.SetMetadata(metadata)
 	MediaFile.SetInputPath(inputPath)
 	MediaFile.SetOutputPath(outputPath)
 
@@ -367,11 +345,11 @@ func (t Transcoder) Output() <-chan Progress {
 				}
 
 				timesec := duration.DurToSec(currentTime)
-				dursec, _ := strconv.ParseFloat(t.MediaFile().Metadata().Format.Duration, 64)
+				dur := t.MediaFile().Metadata().Format.Duration
 				// live stream check
-				if dursec != 0 {
+				if dur > 0 {
 					// Progress calculation
-					progress := (timesec * 100) / dursec
+					progress := (timesec * 100) / dur.Seconds()
 					Progress.Progress = progress
 				}
 				Progress.CurrentBitrate = currentBitrate

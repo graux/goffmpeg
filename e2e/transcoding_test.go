@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/xfrr/goffmpeg/transcoder"
+	"github.com/graux/goffmpeg/transcoder"
 )
 
 const (
@@ -15,14 +15,12 @@ const (
 	resultsPath = "./test_results"
 )
 
-var (
-	// Input files
-	input3gp = path.Join(fixturePath, "input.3gp")
-)
+// Input files
+var input3gp = path.Join(fixturePath, "input.3gp")
 
 func TestInputNotFound(t *testing.T) {
 	createResultsDir(t)
-	var outputPath = path.Join(resultsPath, "notfound.mp4")
+	outputPath := path.Join(resultsPath, "notfound.mp4")
 
 	trans := new(transcoder.Transcoder)
 

@@ -68,7 +68,7 @@ type File struct {
 	httpKeepAlive         bool
 	hwaccel               string
 	streamIds             map[int]string
-	metadata              Metadata
+	metadata              *Metadata
 	videoFilter           string
 	audioFilter           string
 	skipVideo             bool
@@ -77,8 +77,7 @@ type File struct {
 	mapMetadata           string
 	tags                  map[string]string
 	encryptionKey         string
-	movflags              string
-	bframe                int
+	bFrame                int
 	pixFmt                string
 	rawInputArgs          []string
 	rawOutputArgs         []string
@@ -340,7 +339,7 @@ func (m *File) SetSkipAudio(val bool) {
 	m.skipAudio = val
 }
 
-func (m *File) SetMetadata(v Metadata) {
+func (m *File) SetMetadata(v *Metadata) {
 	m.metadata = v
 }
 
@@ -357,7 +356,7 @@ func (m *File) SetTags(val map[string]string) {
 }
 
 func (m *File) SetBframe(v int) {
-	m.bframe = v
+	m.bFrame = v
 }
 
 func (m *File) SetRawInputArgs(args []string) {
@@ -623,7 +622,7 @@ func (m *File) SkipAudio() bool {
 	return m.skipAudio
 }
 
-func (m *File) Metadata() Metadata {
+func (m *File) Metadata() *Metadata {
 	return m.metadata
 }
 
@@ -723,7 +722,6 @@ func (m *File) ToStrCommand() []string {
 		"EncryptionKey",
 		"OutputPath",
 		"Bframe",
-		"MovFlags",
 	}
 
 	for _, name := range opts {
@@ -1095,7 +1093,7 @@ func (m *File) ObtainHlsSegmentDuration() []string {
 
 func (m *File) ObtainHlsMasterPlaylistName() []string {
 	if m.hlsMasterPlaylistName != "" {
-		return []string{"-master_pl_name", fmt.Sprintf("%s", m.hlsMasterPlaylistName)}
+		return []string{"-master_pl_name", m.hlsMasterPlaylistName}
 	} else {
 		return nil
 	}
@@ -1103,7 +1101,7 @@ func (m *File) ObtainHlsMasterPlaylistName() []string {
 
 func (m *File) ObtainHlsSegmentFilename() []string {
 	if m.hlsSegmentFilename != "" {
-		return []string{"-hls_segment_filename", fmt.Sprintf("%s", m.hlsSegmentFilename)}
+		return []string{"-hls_segment_filename", "%s", m.hlsSegmentFilename}
 	} else {
 		return nil
 	}
@@ -1150,7 +1148,7 @@ func (m *File) ObtainSkipAudio() []string {
 }
 
 func (m *File) ObtainStreamIds() []string {
-	if m.streamIds != nil && len(m.streamIds) != 0 {
+	if len(m.streamIds) != 0 {
 		result := []string{}
 		for i, val := range m.streamIds {
 			result = append(result, []string{"-streamid", fmt.Sprintf("%d:%s", i, val)}...)
@@ -1183,14 +1181,14 @@ func (m *File) ObtainEncryptionKey() []string {
 }
 
 func (m *File) ObtainBframe() []string {
-	if m.bframe != 0 {
-		return []string{"-bf", fmt.Sprintf("%d", m.bframe)}
+	if m.bFrame != 0 {
+		return []string{"-bf", fmt.Sprintf("%d", m.bFrame)}
 	}
 	return nil
 }
 
 func (m *File) ObtainTags() []string {
-	if m.tags != nil && len(m.tags) != 0 {
+	if len(m.tags) != 0 {
 		result := []string{}
 		for key, val := range m.tags {
 			result = append(result, []string{"-metadata", fmt.Sprintf("%s=%s", key, val)}...)
