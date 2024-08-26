@@ -1,10 +1,13 @@
 package media
 
 import (
+	"encoding/json"
+	"strconv"
+	"strings"
 	"time"
 )
 
-type Streams struct {
+type Stream struct {
 	Index              int
 	ID                 string      `json:"id"`
 	CodecName          string      `json:"codec_name"`
@@ -26,8 +29,8 @@ type Streams struct {
 	ChromaLocation     string      `json:"chroma_location"`
 	Refs               int         `json:"refs"`
 	QuarterSample      string      `json:"quarter_sample"`
-	DivxPacked         string      `json:"divx_packed"`
-	RFrameRrate        string      `json:"r_frame_rate"`
+	DivXPacked         string      `json:"divx_packed"`
+	RFrameRate         string      `json:"r_frame_rate"`
 	AvgFrameRate       string      `json:"avg_frame_rate"`
 	TimeBase           string      `json:"time_base"`
 	DurationTs         int         `json:"duration_ts"`
@@ -36,6 +39,43 @@ type Streams struct {
 	Disposition        Disposition `json:"disposition"`
 	SideDataList       []SideData  `json:"side_data_list"`
 	Tags               *StreamTags `json:"tags"`
+	FrameRate          float64
+}
+
+func (s *Stream) UnmarshalJSON(bytes []byte) error {
+	type Alias Stream
+	stream := new(Alias)
+	if err := json.Unmarshal(bytes, &stream); err != nil {
+		return err
+	}
+	*s = Stream(*stream)
+	if len(s.AvgFrameRate) > 0 {
+		s.FrameRate = getFrameRate(s.AvgFrameRate)
+	} else if len(s.RFrameRate) > 0 {
+		s.FrameRate = getFrameRate(s.RFrameRate)
+	}
+	return nil
+}
+
+func getFrameRate(frameRate string) float64 {
+	tokens := strings.Split(frameRate, "/")
+	if len(tokens) != 2 {
+		fRate, err := strconv.ParseFloat(frameRate, 64)
+		if err != nil {
+			return 0
+		} else {
+			return fRate
+		}
+	}
+	dividend, err := strconv.Atoi(tokens[0])
+	if err != nil {
+		return 0
+	}
+	divisor, err := strconv.Atoi(tokens[1])
+	if err != nil {
+		return 0
+	}
+	return float64(dividend) / float64(divisor)
 }
 
 type Disposition struct {
@@ -77,15 +117,15 @@ type StreamTags struct {
 	Encoder      *string    `json:"encoder"`
 }
 
-func (s Streams) IsVideo() bool {
+func (s Stream) IsVideo() bool {
 	return s.CodecType == CodecTypeVideo
 }
 
-func (s Streams) IsAudio() bool {
+func (s Stream) IsAudio() bool {
 	return s.CodecType == CodecTypeAudio
 }
 
-func (s Streams) Orientation() *Orientation {
+func (s Stream) Orientation() *Orientation {
 	if !s.IsVideo() || s.Width == 0 || s.Height == 0 {
 		return nil
 	}
@@ -96,7 +136,7 @@ func (s Streams) Orientation() *Orientation {
 	return &orientation
 }
 
-func (s Streams) IsRotated() *bool {
+func (s Stream) IsRotated() *bool {
 	if !s.IsVideo() {
 		return nil
 	}

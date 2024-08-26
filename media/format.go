@@ -9,53 +9,39 @@ import (
 
 type Format struct {
 	Filename       string
-	Streams        int
-	Programs       int
+	Streams        int    `json:"nb_streams"`
+	Programs       int    `json:"nb_programs"`
+	FormatName     string `json:"format_name"`
 	Extensions     []string
-	FormatLongName string
+	FormatLongName string `json:"format_long_name"`
+	DurationStr    string `json:"duration"`
 	Duration       time.Duration
 	Size           uint
 	BitRate        uint
-	ProbeScore     int
-	Tags           Tags
-}
-
-type basicFormat struct {
-	Filename       string
-	NbStreams      int    `json:"nb_streams"`
-	NbPrograms     int    `json:"nb_programs"`
-	FormatName     string `json:"format_name"`
-	FormatLongName string `json:"format_long_name"`
-	Duration       string `json:"duration"`
-	Size           string `json:"size"`
-	BitRate        string `json:"bit_rate"`
+	SizeStr        string `json:"size"`
+	BitRateStr     string `json:"bit_rate"`
 	ProbeScore     int    `json:"probe_score"`
 	Tags           Tags   `json:"tags"`
 }
 
 func (f *Format) UnmarshalJSON(bytes []byte) error {
-	fmt := new(basicFormat)
+	type Alias Format
+	fmt := new(Alias)
 	if err := json.Unmarshal(bytes, fmt); err != nil {
 		return err
 	}
-
-	f.Filename = fmt.Filename
+	*f = Format(*fmt)
 	f.Extensions = strings.Split(fmt.FormatName, ",")
-	f.Streams = fmt.NbStreams
-	f.Programs = fmt.NbPrograms
-	f.Tags = fmt.Tags
-	f.ProbeScore = fmt.ProbeScore
 
-	if bitRate, err := strconv.Atoi(fmt.BitRate); err == nil {
+	if bitRate, err := strconv.Atoi(fmt.BitRateStr); err == nil {
 		f.BitRate = uint(bitRate)
 	}
-	if size, err := strconv.Atoi(fmt.Size); err == nil {
+	if size, err := strconv.Atoi(fmt.SizeStr); err == nil {
 		f.Size = uint(size)
 	}
-	if dur, err := time.ParseDuration(fmt.Duration + "s"); err == nil {
+	if dur, err := time.ParseDuration(fmt.DurationStr + "s"); err == nil {
 		f.Duration = dur
 	}
-
 	return nil
 }
 

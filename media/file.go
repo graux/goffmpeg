@@ -1206,7 +1206,7 @@ func (m *File) ObtainRawOutputArgs() []string {
 	return m.rawOutputArgs
 }
 
-func CheckFileType(streams []Streams) string {
+func CheckFileType(streams []Stream) string {
 	for i := 0; i < len(streams); i++ {
 		st := streams[i]
 		if st.CodecType == "video" {

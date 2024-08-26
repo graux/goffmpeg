@@ -11,20 +11,20 @@ import (
 )
 
 type Metadata struct {
-	Streams []Streams `json:"streams"`
-	Format  Format    `json:"format"`
+	Streams []Stream `json:"streams"`
+	Format  Format   `json:"format"`
 }
 
-func (m Metadata) VideoStreams() []Streams {
+func (m Metadata) VideoStreams() []Stream {
 	return m.filterStreams(CodecTypeVideo)
 }
 
-func (m Metadata) AudioStreams() []Streams {
+func (m Metadata) AudioStreams() []Stream {
 	return m.filterStreams(CodecTypeAudio)
 }
 
-func (m Metadata) filterStreams(codecType CodecType) []Streams {
-	streams := make([]Streams, 0)
+func (m Metadata) filterStreams(codecType CodecType) []Stream {
+	streams := make([]Stream, 0)
 	for _, stream := range m.Streams {
 		if stream.CodecType == codecType {
 			streams = append(streams, stream)
@@ -33,15 +33,15 @@ func (m Metadata) filterStreams(codecType CodecType) []Streams {
 	return streams
 }
 
-func (m Metadata) FirstVideoStream() *Streams {
+func (m Metadata) FirstVideoStream() *Stream {
 	return m.firstStream(CodecTypeVideo)
 }
 
-func (m Metadata) FirstAudioStream() *Streams {
+func (m Metadata) FirstAudioStream() *Stream {
 	return m.firstStream(CodecTypeAudio)
 }
 
-func (m Metadata) firstStream(codecType CodecType) *Streams {
+func (m Metadata) firstStream(codecType CodecType) *Stream {
 	streams := m.filterStreams(codecType)
 	if len(streams) == 0 {
 		return nil

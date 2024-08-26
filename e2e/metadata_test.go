@@ -20,6 +20,6 @@ func TestNewMetadata(t *testing.T) {
 	assert.NotNil(t, metadata)
 	assert.Len(t, metadata.Streams, 2)
 	assert.Contains(t, metadata.Format.Extensions, "3gp")
-	assert.Contains(t, "QuickTime", metadata.Format.FormatLongName)
+	assert.Contains(t, metadata.Format.FormatLongName, "QuickTime")
 	assert.Equal(t, 40.0, metadata.Format.Duration.Truncate(time.Second).Seconds())
 }
